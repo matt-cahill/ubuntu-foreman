@@ -54,6 +54,7 @@ RUN apt-get update && \
 EXPOSE 443
 EXPOSE 8140
 EXPOSE 8443
+EXPOSE 8000
 
 CMD ( test ! -f /etc/foreman/.first_run_completed && \
         ( echo "FIRST-RUN: Please wait while Foreman is installed and configured..."; \
