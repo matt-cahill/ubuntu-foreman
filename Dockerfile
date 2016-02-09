@@ -62,11 +62,11 @@ EXPOSE 8140
 EXPOSE 8443
 EXPOSE 8000
 
-CMD ( test ! -f /etc/foreman/.first_run_completed && \
+CMD ( test ! -f /var/lib/foreman/.first_run_completed && \
         ( echo "FIRST-RUN: Please wait while Foreman is installed and configured..."; \
         /usr/sbin/foreman-installer $FOREOPTS; \
         sed -i -e "s/START=no/START=yes/g" /etc/default/foreman; \
-        touch /etc/foreman/.first_run_completed \
+        touch /var/lib/foreman/.first_run_completed \
         ) \
     ); \
     /etc/init.d/puppet stop && \
