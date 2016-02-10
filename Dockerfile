@@ -44,6 +44,11 @@ RUN apt-get update && \
     echo "deb http://deb.theforeman.org/ trusty 1.10" > /etc/apt/sources.list.d/foreman.list && \
     echo "deb http://deb.theforeman.org/ plugins 1.10" >> /etc/apt/sources.list.d/foreman.list && \
     wget -q http://deb.theforeman.org/pubkey.gpg -O- | apt-key add - && \
+    git clone https://github.com/matt-cahill/gitlab-webhook-receiver.git /var/lib/puppet/gitlab-webhook-receiver && \
+    touch /var/lib/puppet/gitlab-webhook-receiver/webhook.log && \
+    chmod 666 /var/lib/puppet/gitlab-webhook-receiver/webhook.log && \
+    ln -s /var/lib/puppet/gitlab-webhook-receiver/gitlab-webhook-receiver /etc/init.d/gitlab-webhook-receiver && \
+    update-rc.d gitlab-webhook-receiver defaults && \
     apt-get update && \
     apt-get install -y foreman-installer && \
     apt-get install -y software-properties-common && \
@@ -80,4 +85,5 @@ CMD ( test ! -f /var/lib/foreman/.first_run_completed && \
     /etc/init.d/apache2 start && \
     /etc/init.d/puppet start && \
     /etc/init.d/foreman-proxy start && \
+    /etc/init.d/gitlab-webhook-receiver start && \
     tail -f /var/log/foreman/production.log
