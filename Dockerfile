@@ -22,35 +22,25 @@ FROM ubuntu:latest
 MAINTAINER Graham Bevan "graham.bevan@ntlworld.com"
 
 ENV DEBIAN_FRONTEND noninteractive
-ENV FOREOPTS --foreman-locations-enabled \
-        --enable-foreman-compute-ec2 \
-        --enable-foreman-compute-gce \
-        --enable-foreman-compute-ovirt \
-        --enable-foreman-compute-vmware \
-        --enable-foreman-compute-libvirt \
-        --enable-foreman-compute-openstack \
-        --enable-foreman-compute-rackspace \
+ENV FOREOPTS --foreman-proxy-tftp=false \
+        --foreman-unattended=false \
         --enable-puppet \
         --puppet-listen=true \
         --puppet-show-diff=true \
         --puppet-server-envs-dir=/etc/puppet/environments
 
 RUN apt-get update && \
-    apt-get dist-upgrade -y && \
     apt-get -y install ca-certificates wget && \
     wget https://apt.puppetlabs.com/puppetlabs-release-trusty.deb && \
     dpkg -i puppetlabs-release-trusty.deb && \
-    apt-get install -y wget aptitude htop vim vim-puppet git traceroute dnsutils && \
+    apt-get install -y aptitude htop vim vim-puppet git traceroute dnsutils && \
     echo "deb http://deb.theforeman.org/ trusty 1.9" > /etc/apt/sources.list.d/foreman.list && \
     echo "deb http://deb.theforeman.org/ plugins 1.9" >> /etc/apt/sources.list.d/foreman.list && \
     wget -q http://deb.theforeman.org/pubkey.gpg -O- | apt-key add - && \
     apt-get update && \
-    apt-get install -y foreman-installer && \
-    apt-get install -y software-properties-common && \
-    apt-add-repository ppa:ansible/ansible && \
-    apt-get update && \
-    apt-get install -y python-pip ansible && \
-    pip install 'http://github.com/diyan/pywinrm/archive/master.zip#egg=pywinrm' && \
+    apt-get install -y foreman-installer \
+    software-properties-common \
+    python-pip && \
     echo "set modeline" > /root/.vimrc && \
     echo "export TERM=vt100" >> /root/.bashrc && \
     LANG=en_US.UTF-8 locale-gen --purge en_US.UTF-8 && \
