@@ -1,25 +1,25 @@
 # Build:
-#   docker build -t gbevan/ubuntu-foreman .
+#   docker build -t mattcahill/ubuntu-foreman .
 #
 # Run:
-#  docker run -d -P -h foreman.example.com gbevan/ubuntu-foreman
+#  docker run -d -P --name=ubuntu-foreman -h foreman.example.com mattcahill/ubuntu-foreman
 #
 # tail log:
-#   docker ps | awk '/gbevan\/ubuntu-foreman/ {print $1}' | xargs docker logs -f
+#   docker logs -f ubuntu-foreman
 #
 # get port 443 exposed on host
-#  docker ps | awk '/gbevan\/ubuntu-foreman/ {print $1}' | xargs -I id docker port id 443
-#
-# resolve dns issues:
-# /etc/conf/docker
-#  DOCKER_OPTS="--dns ip_1 --dns ip_2"
+#  docker port ubuntu-foreman 443
 #
 # Used the following projects as reference:
 #   riskable/docker-foreman
 #   xnaveira/foreman-docker
+# 
+# This project used a fork of gbevan/ubuntu-foreman as a starting point
+#
+# Please report issues via github
 
 FROM ubuntu:latest
-MAINTAINER Graham Bevan "graham.bevan@ntlworld.com"
+MAINTAINER Matt Cahill
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV FOREOPTS --foreman-proxy-tftp=false \
