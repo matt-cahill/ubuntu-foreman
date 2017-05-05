@@ -18,7 +18,7 @@
 #
 # Please report issues via github
 
-FROM ubuntu:latest
+FROM ubuntu:14.04
 MAINTAINER Matt Cahill
 
 ENV FOREMANVER 1.11
