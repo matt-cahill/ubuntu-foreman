@@ -21,7 +21,7 @@
 FROM ubuntu:14.04
 MAINTAINER Matt Cahill
 
-ENV FOREMANVER 1.11
+ENV FOREMANVER 1.14
 ENV DEBIAN_FRONTEND noninteractive
 ENV FOREOPTS --foreman-proxy-tftp=false \
         --foreman-unattended=false \
@@ -33,8 +33,8 @@ ENV FOREOPTS --foreman-proxy-tftp=false \
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get -y install ca-certificates wget && \
-    wget https://apt.puppetlabs.com/puppetlabs-release-trusty.deb && \
-    dpkg -i puppetlabs-release-trusty.deb && \
+    wget https://apt.puppetlabs.com/puppetlabs-release-pc1-trusty.deb && \
+    dpkg -i puppetlabs-release-pc1-trusty.deb && \
     apt-get install -y wget aptitude htop vim vim-puppet git traceroute dnsutils && \
     echo "deb http://deb.theforeman.org/ trusty $FOREMANVER" > /etc/apt/sources.list.d/foreman.list && \
     echo "deb http://deb.theforeman.org/ plugins $FOREMANVER" >> /etc/apt/sources.list.d/foreman.list && \
@@ -53,25 +53,26 @@ RUN apt-get update && \
     echo "export TERM=vt100" >> /root/.bashrc && \
     LANG=en_US.UTF-8 locale-gen --purge en_US.UTF-8 && \
     echo 'LANG="en_US.UTF-8"\nLANGUAGE="en_US:en"\n' > /etc/default/locale && \
-    dpkg-reconfigure --frontend=noninteractive locales && \
-    rm -f /usr/share/foreman-installer/checks/hostname.rb && \
-    export FACTER_fqdn="foreman.example.com" && \
-    echo "127.1.1.2  foreman.example.com" >> /etc/hosts && \
-    /usr/sbin/foreman-installer $FOREOPTS; \
-    sed -i -e "s/START=no/START=yes/g" /etc/default/foreman
+    dpkg-reconfigure --frontend=noninteractive locales 
+    #&& \
+    #rm -f /usr/share/foreman-installer/checks/hostname.rb && \
+    #export FACTER_fqdn="mjolnir.user.wetafx.co.nz" && \
+    #echo "127.1.1.2  mjolnir.user.wetafx.co.nz" >> /etc/hosts && \
+    #/usr/sbin/foreman-installer $FOREOPTS; \
+    #sed -i -e "s/START=no/START=yes/g" /etc/default/foreman
 
 EXPOSE 443
 EXPOSE 8140
 EXPOSE 8443
 
-#CMD ( test ! -f /etc/foreman/.first_run_completed && \
-#        ( echo "FIRST-RUN: Please wait while Foreman is installed and configured..."; \
-#        /usr/sbin/foreman-installer $FOREOPTS; \
-#        sed -i -e "s/START=no/START=yes/g" /etc/default/foreman; \
-#        touch /etc/foreman/.first_run_completed \
-#        ) \
-#    ); \
-CMD /etc/init.d/puppet stop && \
+CMD ( test ! -f /etc/foreman/.first_run_completed && \
+        ( echo "FIRST-RUN: Please wait while Foreman is installed and configured..."; \
+        /usr/sbin/foreman-installer $FOREOPTS; \
+        sed -i -e "s/START=no/START=yes/g" /etc/default/foreman; \
+        touch /etc/foreman/.first_run_completed \
+        ) \
+    ); \
+    /etc/init.d/puppet stop && \
     /etc/init.d/apache2 stop && \
     /etc/init.d/foreman stop && \
     /etc/init.d/postgresql stop && \
